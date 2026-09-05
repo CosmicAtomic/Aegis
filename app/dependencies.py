@@ -1,4 +1,5 @@
 import uuid
+from app.config import settings
 from app.database import SessionLocal
 from app.security import decode_access_token
 from app.services import get_user_by_email, get_user_by_id
@@ -38,7 +39,7 @@ def get_session_user(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired session")
     session_data = sessions[session_id]
     elapsed = datetime.now() - session_data["created_at"]
-    if elapsed > timedelta(minutes=30):
+    if elapsed > timedelta(minutes=settings.SESSION_EXPIRE_MINUTES):
         del sessions[session_id]
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired session")
     user_id = uuid.UUID(session_data["user_id"])
