@@ -1,7 +1,5 @@
 import jwt
-import os
 from app.config import settings
-from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 from pwdlib import PasswordHash
 
