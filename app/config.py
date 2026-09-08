@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     ALGORITHM : str = 'HS256'
     ACCESS_TOKEN_EXPIRE_MINUTES : int = 30
     SESSION_EXPIRE_MINUTES : int = 30
+    GITHUB_CLIENT_ID : str
+    GITHUB_CLIENT_SECRET : str
 
     model_config = SettingsConfigDict(env_file=".env")
 
