@@ -16,7 +16,7 @@ REDIRECT_URI = "http://localhost:8000/github/callback"
 github_auth = APIRouter(prefix="/github")
 
 @github_auth.get('/login')
-def login():
+def login_via_github():
     github_authorize_url =(
         "https://github.com/login/oauth/authorize"
         f"?client_id={GITHUB_CLIENT_ID}"
