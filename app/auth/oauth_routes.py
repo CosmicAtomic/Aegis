@@ -1,4 +1,4 @@
-import httpx
+import httpx2
 from app.config import settings
 from app.dependencies import get_db
 from app.models import User
@@ -27,7 +27,7 @@ def login_via_github():
 
 @github_auth.get('/callback')
 async def github_callback(code, db: Session = Depends(get_db)):
-    async with httpx.AsyncClient() as client:
+    async with httpx2.AsyncClient() as client:
         token_response = await client.post(
             "https://github.com/login/oauth/access_token",
             data={

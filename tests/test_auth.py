@@ -4,7 +4,7 @@ from app.dependencies import sessions
 from app.main import app
 from app.security import ALGORITHM, JWT_SECRET_KEY, hash_password
 from datetime import datetime, timedelta, timezone
-from httpx import ASGITransport, AsyncClient
+from httpx2 import ASGITransport, AsyncClient
 
 def make_expired_token(email):
     payload = {
