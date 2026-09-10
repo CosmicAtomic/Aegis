@@ -1,6 +1,6 @@
-from app.dependencies import get_db, get_session_user, sessions
+from app.dependencies import get_db, get_session_user, sessions, verify_csrf_token
 from app.schema import UserCreate, UserResponse
-from app.security import verify_password
+from app.security import verify_password, generate_csrf_token
 from app.services import get_user_by_email
 from datetime import datetime
 from fastapi import APIRouter, Depends,  HTTPException, Response, Request, status
@@ -24,8 +24,17 @@ def login(payload: UserCreate, response: Response, db: Session = Depends(get_db)
           key="session_id",
           value= session_id,
           httponly=True,
-          secure= True,
+          secure= False,
           samesite= "lax"
+    )
+    csrf_token = generate_csrf_token()
+    response.set_cookie(
+         key='csrfToken',
+         value=csrf_token,
+         httponly=False,
+         secure=False,
+         samesite='lax',
+         max_age=3600
     )
     return {"message": "Logged in"}
 
@@ -33,11 +42,12 @@ def login(payload: UserCreate, response: Response, db: Session = Depends(get_db)
 def get_me(user = Depends(get_session_user)):
     return user
             
-@session_auth.post('/logout')
+@session_auth.post('/logout', dependencies=[Depends(verify_csrf_token)])
 def logout(request: Request, response: Response):
     session_id = request.cookies.get("session_id")
     if session_id in sessions:
         del sessions[session_id]
     response.delete_cookie("session_id")
+    response.delete_cookie("csrfToken")
     return {"message": "Logged out"}
       
