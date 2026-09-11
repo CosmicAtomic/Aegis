@@ -123,8 +123,7 @@ async def test_expired_session_rejected(client, logged_in_session):
 @pytest.mark.asyncio
 async def test_logout_removes_session(client, logged_in_session):
     client.cookies.update({"session_id": logged_in_session})
-    cookie_obj = client.cookies.get("csrfToken")
-    csrf_token = cookie_obj.value if cookie_obj else ""
+    csrf_token = client.cookies.get("csrfToken")
     await client.post("/session/logout", headers={"X-CSRF-Token": csrf_token})
     assert logged_in_session not in sessions 
 
@@ -135,7 +134,7 @@ async def test_logout_removes_session(client, logged_in_session):
 async def test_rate_limit_blocks_after_threshold_session(client):
     spam_payload = {"email": "spam@example.com", "password": "guessed_password"}
     for _ in range(5):
-        await client.post('jwt/login', json= spam_payload)
+        await client.post('session/login', json= spam_payload)
     response = await client.post('session/login', json= spam_payload)
     assert response.status_code == 429
 

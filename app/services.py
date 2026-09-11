@@ -1,13 +1,6 @@
-import time
 from app.models import User
 from collections import defaultdict
-from fastapi import HTTPException, Request
 from sqlalchemy.orm import Session
-
-MAX_ATTEMPTS = 5
-WINDOW_SECONDS = 60
-
-attempt_log = defaultdict(list)
 
 def get_user_by_email(db: Session, email):
     return db.query(User).filter(User.email == email).first()
@@ -20,10 +13,3 @@ def get_user_by_github_id(db: Session, github_id):
 
 def get_user_by_google_id(db: Session, google_id):
     return db.query(User).filter(User.google_id == str(google_id)).first()
-
-def check_rate_limit(key):
-    now = time.time()
-    attempt_log[key] = [t for t in attempt_log[key] if now- t< WINDOW_SECONDS]
-    if len(attempt_log[key]) >= MAX_ATTEMPTS:
-        raise HTTPException(status_code=429, detail= "Too many login attempts. try again later")
-    attempt_log[key].append(now)

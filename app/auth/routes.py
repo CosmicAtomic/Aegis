@@ -1,16 +1,17 @@
 from app.dependencies import get_current_user, get_db
+from app.limiter import limiter
 from app.models import User
 from app.security import create_access_token, hash_password, verify_password 
-from app.services import check_rate_limit, get_user_by_email
+from app.services import get_user_by_email
 from app.schema import Token, UserCreate, UserResponse
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 jwt_auth = APIRouter(prefix='/jwt')
 
 @jwt_auth.post('/login')
-def login(payload: UserCreate, db: Session = Depends(get_db)):
-    check_rate_limit(payload.email)
+@limiter.limit('5/minute')
+def login(payload: UserCreate, request: Request, db: Session = Depends(get_db)):
     user = get_user_by_email(db, payload.email)
     if not user or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail = "Invalid credentials")

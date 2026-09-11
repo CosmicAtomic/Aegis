@@ -1,7 +1,8 @@
 from app.dependencies import get_db, get_session_user, sessions, verify_csrf_token
+from app.limiter import limiter
 from app.schema import UserCreate, UserResponse
 from app.security import verify_password, generate_csrf_token
-from app.services import check_rate_limit ,get_user_by_email
+from app.services import get_user_by_email
 from datetime import datetime
 from fastapi import APIRouter, Depends,  HTTPException, Response, Request, status
 from sqlalchemy.orm import Session
@@ -10,8 +11,8 @@ from uuid import uuid4
 session_auth = APIRouter(prefix='/session')
 
 @session_auth.post('/login')
-def login(payload: UserCreate, response: Response, db: Session = Depends(get_db)):
-    check_rate_limit(payload.email)
+@limiter.limit('5/minute')
+def login(payload: UserCreate, request: Request, response: Response, db: Session = Depends(get_db)):
     user = get_user_by_email(db, payload.email)
     if not user or not verify_password(payload.password, user.hashed_password):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail = "Invalid credentials")
