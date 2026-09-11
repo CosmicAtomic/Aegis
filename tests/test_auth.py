@@ -88,6 +88,14 @@ async def test_protected_routes_garbage_token(client):
     response = await client.get('jwt/me', headers= {"Authorization": f"Bearer not.a.token"})
     assert response.status_code == 401
 
+@pytest.mark.asyncio
+async def test_rate_limit_blocks_after_threshold_jwt(client):
+    spam_payload = {"email": "spam@example.com", "password": "guessed_password"}
+    for _ in range(5):
+        await client.post('jwt/login', json= spam_payload)
+    response = await client.post('jwt/login', json= spam_payload)
+    assert response.status_code == 429
+
 # ------- Test Session Auth----------
 async def test_session_login_success(client, registered_user):
     response = await client.post('/session/login', json= registered_user)
@@ -115,9 +123,19 @@ async def test_expired_session_rejected(client, logged_in_session):
 @pytest.mark.asyncio
 async def test_logout_removes_session(client, logged_in_session):
     client.cookies.update({"session_id": logged_in_session})
-    await client.post("/session/logout")
+    cookie_obj = client.cookies.get("csrfToken")
+    csrf_token = cookie_obj.value if cookie_obj else ""
+    await client.post("/session/logout", headers={"X-CSRF-Token": csrf_token})
     assert logged_in_session not in sessions 
 
     response = await client.get("/session/me")
     assert response.status_code == 401 
+
+@pytest.mark.asyncio
+async def test_rate_limit_blocks_after_threshold_session(client):
+    spam_payload = {"email": "spam@example.com", "password": "guessed_password"}
+    for _ in range(5):
+        await client.post('jwt/login', json= spam_payload)
+    response = await client.post('session/login', json= spam_payload)
+    assert response.status_code == 429
 
