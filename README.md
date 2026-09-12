@@ -1,4 +1,4 @@
-# Auth Service
+# Aegis
 
 A FastAPI authentication service providing multiple authentication approaches:
 
