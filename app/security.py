@@ -1,7 +1,6 @@
 import jwt
-import os
+import secrets
 from app.config import settings
-from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 from pwdlib import PasswordHash
 
@@ -28,3 +27,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 def decode_access_token(token):
     return jwt.decode(token, key=JWT_SECRET_KEY, algorithms= ALGORITHM)
+
+def generate_csrf_token():
+    return secrets.token_hex(32)

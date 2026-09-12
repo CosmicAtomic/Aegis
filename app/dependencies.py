@@ -1,3 +1,4 @@
+import secrets
 import uuid
 from app.config import settings
 from app.database import SessionLocal
@@ -45,3 +46,12 @@ def get_session_user(request: Request, db: Session = Depends(get_db)):
     user_id = uuid.UUID(session_data["user_id"])
     user = get_user_by_id(db, user_id)
     return user
+
+def verify_csrf_token(request: Request):
+    cookie_token = request.cookies.get("csrfToken")
+    header_token = request.headers.get('X-CSRF-Token')
+    if not cookie_token or not header_token:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="CSRF token missing")
+    if not secrets.compare_digest(cookie_token, header_token):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="CSRF token mismatch")
+    return True
