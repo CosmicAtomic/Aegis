@@ -31,7 +31,10 @@ async def login_via_google(request: Request):
 
 @google_auth.get("/callback")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
-    token = await oauth.google.authorize_access_token(request)
+    try:
+        token = await oauth.google.authorize_access_token(request)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="Google OAuth authentication failed.") from exc
     google_user = token.get("userinfo")
     if not google_user or not google_user.get("sub"):
         raise HTTPException(status_code=400, detail="Google did not return valid user information.")
