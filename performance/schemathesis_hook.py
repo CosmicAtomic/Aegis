@@ -5,7 +5,7 @@ import uuid
 # ==============================================================================
 # SCHEMATHESIS RUN INSTRUCTION
 # ==============================================================================
-# export SCHEMATHESIS_HOOKS="tests/auth_hook.py"
+# export SCHEMATHESIS_HOOKS="performance/schemathesis_hook.py"
 # 
 # schemathesis run http://localhost:8000/openapi.json \
 #   --exclude-path="/session/logout" \
