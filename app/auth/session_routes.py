@@ -14,7 +14,8 @@ session_auth = APIRouter(
     responses={
         401: COMMON_RESPONSES[401],
         403: COMMON_RESPONSES[403],
-        429: COMMON_RESPONSES[429]
+        429: COMMON_RESPONSES[429],
+        400: COMMON_RESPONSES[400]
     }
 )
 
