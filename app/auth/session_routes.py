@@ -1,4 +1,5 @@
 from app.dependencies import get_db, get_session_user, sessions, verify_csrf_token
+from app.error_responses import COMMON_RESPONSES
 from app.limiter import limiter
 from app.schema import UserCreate, UserResponse
 from app.security import verify_password, generate_csrf_token
@@ -8,7 +9,14 @@ from fastapi import APIRouter, Depends,  HTTPException, Response, Request, statu
 from sqlalchemy.orm import Session
 from uuid import uuid4
 
-session_auth = APIRouter(prefix='/session')
+session_auth = APIRouter(
+    prefix='/session',
+    responses={
+        401: COMMON_RESPONSES[401],
+        403: COMMON_RESPONSES[403],
+        429: COMMON_RESPONSES[429]
+    }
+)
 
 @session_auth.post('/login')
 @limiter.limit('5/minute')

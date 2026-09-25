@@ -1,6 +1,7 @@
 import httpx2
 from app.config import settings
 from app.dependencies import get_db
+from app.error_responses import COMMON_RESPONSES
 from app.models import User
 from app.schema import Token
 from app.security import create_access_token
@@ -13,7 +14,12 @@ GITHUB_CLIENT_ID = settings.GITHUB_CLIENT_ID
 GITHUB_CLIENT_SECRET = settings.GITHUB_CLIENT_SECRET
 REDIRECT_URI = "http://localhost:8000/github/callback"
 
-github_auth = APIRouter(prefix="/github")
+github_auth = APIRouter(
+    prefix="/github",
+    responses={
+        400: COMMON_RESPONSES[400]
+    }
+)
 
 @github_auth.get('/login')
 def login_via_github():
