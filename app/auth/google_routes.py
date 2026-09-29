@@ -1,5 +1,6 @@
 from app.config import settings
 from app.dependencies import get_db
+from app.error_responses import COMMON_RESPONSES
 from app.models import User
 from app.schema import Token
 from app.security import create_access_token
@@ -13,7 +14,12 @@ GOOGLE_CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
 
 # NOTE: Use http://localhost:8000/google/login while testing
 
-google_auth= APIRouter(prefix="/google")
+google_auth= APIRouter(
+    prefix="/google",
+    responses={
+        400: COMMON_RESPONSES[400]
+    }
+)
 
 oauth = OAuth()
 oauth.register(

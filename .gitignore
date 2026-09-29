@@ -34,3 +34,7 @@ Thumbs.db
 #Database
 *.sqlite3
 *.db
+
+# Schemathesis
+.hypothesis/
+.schemathesis/
