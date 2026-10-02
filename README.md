@@ -1,4 +1,4 @@
-# Aegis Auth Service
+# Aegis
 
 Aegis is a FastAPI authentication service that exposes four authentication flows:
 
