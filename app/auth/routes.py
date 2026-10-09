@@ -14,7 +14,8 @@ jwt_auth = APIRouter(
         401: COMMON_RESPONSES[401],
         400: COMMON_RESPONSES[400],
         429: COMMON_RESPONSES[429]
-    }
+    },
+    tags=["JWT authentication"]
 )
 
 @jwt_auth.post('/login')

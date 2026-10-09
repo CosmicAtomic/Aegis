@@ -16,7 +16,8 @@ session_auth = APIRouter(
         403: COMMON_RESPONSES[403],
         429: COMMON_RESPONSES[429],
         400: COMMON_RESPONSES[400]
-    }
+    },
+    tags=["Cookie sessions"]
 )
 
 @session_auth.post('/login')

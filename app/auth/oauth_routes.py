@@ -18,7 +18,8 @@ github_auth = APIRouter(
     prefix="/github",
     responses={
         400: COMMON_RESPONSES[400]
-    }
+    },
+    tags=["Github OAuth"]
 )
 
 @github_auth.get('/login')

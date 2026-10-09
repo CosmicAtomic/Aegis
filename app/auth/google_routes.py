@@ -18,7 +18,8 @@ google_auth= APIRouter(
     prefix="/google",
     responses={
         400: COMMON_RESPONSES[400]
-    }
+    },
+    tags=["Google OAuth"]
 )
 
 oauth = OAuth()
